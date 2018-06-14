@@ -26,8 +26,12 @@ export default class Login extends Component {
         console.log(user);
 
       }); 
+      
+        this.props.navigation.navigate("Home");
         
     } 
+  
+    
     catch (error) {
       console.log(error.toString());
     }
