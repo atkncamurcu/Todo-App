@@ -15,30 +15,35 @@ import App from '../../App'
 import {Navigator} from 'react-navigation';
 
 
+
 export default class Login extends Component {
-  
-  
-  loginUser(){
 
-    try {
-
-      firebase.auth().signInWithEmailAndPassword(email, password) .then(function(user) {
-        console.log(user);
-
-      }); 
-        
-    } 
-    catch (error) {
-      console.log(error.toString());
-    }
-
+  componentDidMount(){
+    firebase.auth().onAuthStateChanged(user => {
+      if(user){
+        this.props.navigation.navigate('Home');
+      }
+    })
   }
 
-   
-      
+   loginUser(){
 
-  
+     const email = this.state.email;
+     const password = this.state.password;
+     
+    firebase.auth().signInAndRetrieveDataWithEmailAndPassword(email, password)
+    .catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      if (errorCode === 'auth/wrong-password') {
+        alert('Wrong password.');
+      } else {
+        alert(errorMessage);
+      }
+      console.log(error);
 
+    });
+  }
   
   render() {
     return (
@@ -79,7 +84,7 @@ export default class Login extends Component {
             <Text style={styles.buttonText}>LOGIN</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.buttonContainer} >
             <Text style={styles.buttonText}> Continue with Facebook </Text>
           </TouchableOpacity>
 

@@ -9,15 +9,33 @@ import {
 import firebase from "react-native-firebase";
 import { StackNavigator } from "react-navigation";
 
+
+
 import App from "../../App";
 
 export default class Register extends Component {
+  constructor(){
+    super();
+    this.state = {
+      email: '',
+      password: '',
+      firstanem:'',
+      lastname: ''
+    }
+  }
   signUpUser = (email, password) => {
     try {
       firebase
         .auth()
-        .createUserAndRetrieveDataWithEmailAndPassword(email, password);
-        this.props.navigation.navigate("Login");
+        .createUserAndRetrieveDataWithEmailAndPassword(email, password).then(() => {
+          const uid = firebase.auth().currentUser.uid;
+          firebase.database().ref('users/' + uid).set({
+            email: this.state.email,
+            password: this.state.password,
+            firstname: this.state.firstname,
+            lastname: this.state.lastname,
+          });
+      });
     } catch (error) {
       console.log(error.toString());
     }
@@ -59,6 +77,7 @@ export default class Register extends Component {
             autoCorrect={false}
             ref={"FirstText"}
             onSubmitEditing={() => this.refs.LastText.focus()}
+            onChangeText={firstname => this.setState({ firstname })}
           />
 
           <TextInput
@@ -68,6 +87,7 @@ export default class Register extends Component {
             returnKeyType="go"
             autoCorrect={false}
             ref={"LastText"}
+            onChangeText={lastname => this.setState({ lastname })}
           />
 
           <TouchableOpacity
